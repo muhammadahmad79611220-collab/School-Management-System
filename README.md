@@ -1,4 +1,4 @@
-# PAK GRAMMAR SCHOOL PATTOKI — School Management System (v2.1)
+# Muhammad Ahmad — School Management System (v2.1)
 
 A secure, modular PHP + MySQL school management system: Students, Teachers,
 Classes/Sections, Subjects, Attendance, Exams & Results, Fee Management
