@@ -7,11 +7,15 @@
  * common way real school sites get breached.
  */
 
-define('DB_HOST', '127.0.0.1');
-define('DB_PORT', '4306');
-define('DB_NAME', 'sms_db');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Same env-var-first approach as config/database.php, so this works
+// correctly whether you're on XAMPP (falls back to local defaults) or on
+// Vercel (reads the DB_HOST/DB_PORT/DB_NAME/DB_USER/DB_PASS values you set
+// in the project's Environment Variables).
+define('DB_HOST', getenv('DB_HOST') ?: '127.0.0.1');
+define('DB_PORT', getenv('DB_PORT') ?: '4306');
+define('DB_NAME', getenv('DB_NAME') ?: 'sms_db');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 // A one-time setup key. Change this before running, then nobody can trigger
 // the installer just by visiting the URL.
