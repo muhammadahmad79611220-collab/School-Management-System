@@ -1,0 +1,9 @@
+{
+  "functions": {
+    "api/**/*.php": { "runtime": "vercel-php@0.9.0" }
+  },
+  "rewrites": [
+    { "source": "/", "destination": "/api/index.php" },
+    { "source": "/((?!assets/|manifest.json|service-worker.js).*)", "destination": "/api/$1" }
+  ]
+}

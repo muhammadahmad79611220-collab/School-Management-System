@@ -1,0 +1,297 @@
+/* ══════════════════════════════════════════════
+   PAK GRAMMAR SCHOOL PATTOKI — Global Styles
+══════════════════════════════════════════════ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(160deg, #f3f5fb 0%, #eef1f8 40%, #eef3f1 100%);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+    width: 240px;
+    background: linear-gradient(175deg, #0f2349 0%, #1e3c72 55%, #2a5298 100%);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    padding: 0 0 20px;
+    box-shadow: 3px 0 15px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+}
+
+.sidebar-brand {
+    text-align: center;
+    padding: 22px 14px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 6px;
+    background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 70%);
+}
+.sidebar-brand-logo {
+    width: 64px; height: 64px; margin: 0 auto 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.14);
+    border: 2.5px solid rgba(255,255,255,0.35);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 0 0 3px rgba(255,255,255,0.05);
+}
+.sidebar-brand-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.sidebar-brand-name {
+    font-size: 13.5px; font-weight: 800; letter-spacing: 0.4px; line-height: 1.35;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.sidebar-brand-role {
+    font-size: 10.5px; opacity: 0.7; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.8px;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.85);
+    padding: 12px 22px;
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border-left-color: #74b9ff;
+    padding-left: 28px;
+}
+
+.sidebar a.active {
+    background: rgba(255,255,255,0.18);
+    font-weight: 700;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.sidebar-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.5;
+    padding: 16px 22px 6px;
+}
+
+/* ── MAIN CONTENT ── */
+.content {
+    margin-left: 240px;
+    padding: 28px 32px;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* ── CARD ── */
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 10px rgba(30,60,114,0.06), 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow .25s, transform .25s;
+}
+.card:hover { box-shadow: 0 8px 26px rgba(30,60,114,0.10), 0 2px 6px rgba(0,0,0,0.05); }
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e3c72;
+}
+
+/* ── TABLE ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eef0f7;
+    font-size: 14px;
+}
+
+th {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+tr:hover td { background: #f8f9ff; }
+tr:last-child td { border-bottom: none; }
+
+.table-wrap { overflow-x: auto; }
+
+/* ── BUTTONS ── */
+.btn {
+    display: inline-block;
+    padding: 9px 20px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    letter-spacing: 0.2px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(30,60,114,0.35);
+    filter: brightness(1.05);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(30,60,114,0.3);
+}
+
+.btn-danger  { background: linear-gradient(135deg,#c0392b,#e74c3c); }
+.btn-success { background: linear-gradient(135deg,#1a6b3a,#27ae60); }
+.btn-warning { background: linear-gradient(135deg,#d35400,#e67e22); }
+.btn-secondary { background: #6c757d; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-block { width: 100%; text-align: center; }
+
+/* ── INPUTS ── */
+input, select, textarea {
+    padding: 10px 13px;
+    border: 2px solid #e0e4ef;
+    border-radius: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 14px;
+    transition: border-color .25s, box-shadow .25s;
+    font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #2a5298;
+    box-shadow: 0 0 0 3px rgba(42,82,152,0.1);
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 4px 16px;
+}
+
+.form-group { margin-bottom: 6px; }
+
+/* ── BADGES ── */
+.badge {
+    display: inline-block;
+    padding: 3px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+.badge-success { background: #e3f9e5; color: #1a6b3a; }
+.badge-danger  { background: #fde8e8; color: #c0392b; }
+.badge-warning { background: #fff4e0; color: #d35400; }
+.badge-info    { background: #e8eaff; color: #2a5298; }
+.badge-secondary { background: #eee; color: #666; }
+
+/* ── ALERTS ── */
+.alert {
+    padding: 13px 18px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    border-left: 4px solid transparent;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.alert-success { background: #e8f5e9; color: #1b5e20; border-left-color: #27ae60; }
+.alert-error   { background: #ffebee; color: #b71c1c; border-left-color: #e74c3c; }
+.alert-info    { background: #e3f2fd; color: #0d47a1; border-left-color: #2196f3; }
+
+/* ── DASHBOARD STATS (legacy support) ── */
+.dashboard-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+.stat-card {
+    background: white;
+    padding: 22px 20px;
+    border-radius: 14px;
+    text-align: center;
+    flex: 1;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+    transition: transform .25s;
+}
+.stat-card:hover { transform: translateY(-4px); }
+.stat-card h3 { color: #1e3c72; font-size: 36px; font-weight: 800; }
+.stat-card p { color: #888; font-size: 13px; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── AUTH PAGES (login / change password) ── */
+.auth-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.login-card h2 { text-align: center; margin-bottom: 10px; color: #333; }
+.login-card .subtitle { text-align: center; color: #666; margin-bottom: 25px; font-size: 14px; }
+.login-card .info { text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; font-size: 13px; color: #888; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f0f2f5; }
+::-webkit-scrollbar-thumb { background: #bcc4d8; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2a5298; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+    .sidebar { width: 200px; }
+    .content { margin-left: 200px; padding: 16px; }
+}
