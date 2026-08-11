@@ -159,7 +159,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             )->execute([$studentUsername, $studentHash, 'student', $full_name, $newStudentId]);
             log_activity('student_login_created', "student_id=$newStudentId username=$studentUsername");
 
-            flash('success', "Student added successfully. Login created — Username: {$studentUsername} — Temporary password: {$studentTempPassword} (share this securely with the student/guardian; it must be changed on first login).");
+            // Structured data for the pretty printable credentials card (shown once).
+            $_SESSION['new_login_card'] = [
+                'student_id' => $newStudentId,
+                'full_name'  => $full_name,
+                'roll_no'    => $roll_no,
+                'class_name' => null, // filled in below if we can look it up cheaply
+                'username'   => $studentUsername,
+                'password'   => $studentTempPassword,
+            ];
+            if ($class_id) {
+                $cn = $pdo->prepare("SELECT class_name FROM classes WHERE id = ?");
+                $cn->execute([$class_id]);
+                $_SESSION['new_login_card']['class_name'] = $cn->fetchColumn() ?: null;
+            }
+
+            flash('success', 'Student added successfully. Login credentials are ready below.');
         }
         redirect('list.php');
     }

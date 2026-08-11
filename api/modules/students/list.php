@@ -73,6 +73,11 @@ $classes = $pdo->query("SELECT id, class_name FROM classes ORDER BY sort_order")
 
             <?php echo flash_render(); ?>
 
+            <?php if (!empty($_SESSION['new_login_card'])): ?>
+                <?php $__cred = $_SESSION['new_login_card']; unset($_SESSION['new_login_card']); ?>
+                <?php include BASE_PATH . '/includes/credentials_card.php'; ?>
+            <?php endif; ?>
+
             <form method="GET" class="form-grid" style="margin-bottom:16px;">
                 <div class="form-group">
                     <input type="text" name="search" placeholder="Search by name or roll no" value="<?php echo e($search); ?>">

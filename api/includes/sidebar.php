@@ -21,6 +21,9 @@ $__brandLogo = !empty($__settings['logo']) ? BASE_URL . 'assets/uploads/branding
 
     <?php if (is_student_role($role)): ?>
         <a href="<?php echo BASE_URL; ?>dashboard.php" class="<?php echo $current_page=='dashboard.php' ? 'active':''; ?>">👤 My Profile</a>
+        <a href="<?php echo BASE_URL; ?>modules/attendance/my.php" class="<?php echo str_contains($uri,'attendance/my') ? 'active':''; ?>">✅ My Attendance</a>
+        <a href="<?php echo BASE_URL; ?>modules/exams/my_results.php" class="<?php echo str_contains($uri,'my_results') ? 'active':''; ?>">📝 My Results</a>
+        <a href="<?php echo BASE_URL; ?>modules/fees/my_status.php" class="<?php echo str_contains($uri,'my_status') ? 'active':''; ?>">💰 My Fee Status</a>
         <a href="<?php echo BASE_URL; ?>modules/timetable/view.php" class="<?php echo str_contains($uri,'timetable') ? 'active':''; ?>">🗓️ Timetable</a>
         <a href="<?php echo BASE_URL; ?>modules/notices/list.php" class="<?php echo str_contains($uri,'notices') ? 'active':''; ?>">📢 Notices</a>
         <a href="<?php echo BASE_URL; ?>change_password.php" style="margin-top:auto;">🔑 Change Password</a>

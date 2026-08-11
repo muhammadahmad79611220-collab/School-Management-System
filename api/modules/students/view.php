@@ -43,6 +43,21 @@ if (current_role() === 'teacher') {
     }
 }
 
+// Login account info — shown to admins so they can see/reset the student's
+// portal login. Never shown to the student themself here (they already know
+// their own username, and we never expose password hashes).
+$loginAccount = null;
+if (is_admin()) {
+    $ustmt = $pdo->prepare("SELECT username, must_change_password, is_active, last_login FROM users WHERE student_id = ? LIMIT 1");
+    $ustmt->execute([$id]);
+    $loginAccount = $ustmt->fetch();
+}
+
+$__settings  = function_exists('get_settings') ? get_settings() : [];
+$__brandName = !empty($__settings['school_name']) ? $__settings['school_name'] : APP_NAME;
+$__brandLogo = !empty($__settings['logo']) ? BASE_URL . 'assets/uploads/branding/' . $__settings['logo'] : null;
+$__isSelf    = is_student_role(current_role());
+
 function row($label, $value) {
     $value = $value !== null && $value !== '' ? e($value) : '—';
     echo "<div class='form-group'><label>$label</label><div style='padding:8px 0;color:#333;'>$value</div></div>";
@@ -58,17 +73,41 @@ function row($label, $value) {
 <body>
 <?php include BASE_PATH . '/includes/sidebar.php'; ?>
 <div class="content">
-    <div class="card-header" style="margin-bottom:16px;">
-        <div class="card-title">👤 Student Profile</div>
+
+    <!-- Print-only letterhead: hidden on screen, shown only when printing -->
+    <div class="print-letterhead">
+        <?php if ($__brandLogo): ?><img src="<?php echo e($__brandLogo); ?>" alt="logo"><?php endif; ?>
         <div>
-            <?php if (!is_student_role(current_role())): ?>
-                <a href="form.php?id=<?php echo $id; ?>" class="btn">✏️ Edit</a>
-                <a href="list.php" class="btn btn-secondary">← Back</a>
-            <?php endif; ?>
+            <div class="print-letterhead-school"><?php echo e($__brandName); ?></div>
+            <div class="print-letterhead-sub">Student Profile — Printed <?php echo date('d M Y'); ?></div>
         </div>
     </div>
 
-    <div class="card" style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+    <?php if ($__isSelf): ?>
+        <!-- Student's own view: a warmer, welcoming portal header instead of an admin management bar -->
+        <div class="profile-hero no-print">
+            <div class="profile-hero-greeting">👋 Welcome back, <?php echo e(explode(' ', $student['full_name'])[0]); ?>!</div>
+            <div class="profile-hero-sub">Here's your student profile at <?php echo e($__brandName); ?>.</div>
+        </div>
+    <?php else: ?>
+        <div class="card-header no-print" style="margin-bottom:16px;">
+            <div class="card-title">👤 Student Profile</div>
+            <div>
+                <button type="button" class="btn btn-secondary" onclick="window.print()">🖨️ Print</button>
+                <a href="form.php?id=<?php echo $id; ?>" class="btn">✏️ Edit</a>
+                <a href="list.php" class="btn btn-secondary">← Back</a>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <?php echo flash_render(); ?>
+
+    <?php if (!empty($_SESSION['new_login_card'])): ?>
+        <?php $__cred = $_SESSION['new_login_card']; unset($_SESSION['new_login_card']); ?>
+        <?php include BASE_PATH . '/includes/credentials_card.php'; ?>
+    <?php endif; ?>
+
+    <div class="card profile-banner<?php echo $__isSelf ? ' profile-banner-self' : ''; ?>" style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
         <?php if ($student['picture']): ?>
             <img src="<?php echo BASE_URL . e(UPLOAD_URL . '/' . $student['picture']); ?>" style="width:90px;height:90px;border-radius:14px;object-fit:cover;">
         <?php else: ?>
@@ -79,7 +118,31 @@ function row($label, $value) {
             <div style="color:#888;">Roll No: <?php echo e($student['roll_no']); ?> &nbsp;|&nbsp; <?php echo e(($student['class_name'] ?? '—') . ' - ' . ($student['section_name'] ?? '—')); ?></div>
             <span class="badge <?php echo $student['status']==='Active'?'badge-success':'badge-secondary'; ?>" style="margin-top:6px;display:inline-block;"><?php echo e($student['status']); ?></span>
         </div>
+        <?php if ($__isSelf): ?>
+            <button type="button" class="btn no-print" style="margin-left:auto;" onclick="window.print()">🖨️ Print My Profile</button>
+        <?php endif; ?>
     </div>
+
+    <?php if (!$__isSelf && is_admin()): ?>
+    <div class="card no-print">
+        <div class="card-title" style="margin-bottom:14px;">🔑 Portal Login</div>
+        <?php if ($loginAccount): ?>
+            <div class="form-grid">
+                <?php row('Username', $loginAccount['username']); ?>
+                <?php row('Status', $loginAccount['is_active'] ? 'Active' : 'Disabled'); ?>
+                <?php row('Password Status', $loginAccount['must_change_password'] ? 'Must change on next login' : 'Set by student'); ?>
+                <?php row('Last Login', $loginAccount['last_login'] ? date('d M Y, H:i', strtotime($loginAccount['last_login'])) : 'Never'); ?>
+            </div>
+        <?php else: ?>
+            <p style="color:#888;margin-bottom:12px;">This student doesn't have a portal login yet.</p>
+        <?php endif; ?>
+        <form method="POST" action="reset_login.php?id=<?php echo $id; ?>" onsubmit="return confirm('Generate a new temporary password for this student? The old one will stop working immediately.');">
+            <?php echo csrf_field(); ?>
+            <input type="hidden" name="id" value="<?php echo $id; ?>">
+            <button type="submit" class="btn btn-secondary">🔄 <?php echo $loginAccount ? 'Reset Password' : 'Create Login'; ?></button>
+        </form>
+    </div>
+    <?php endif; ?>
 
     <div class="card">
         <div class="card-title" style="margin-bottom:14px;">Personal Information</div>
@@ -89,10 +152,12 @@ function row($label, $value) {
             <?php row('CNIC / B-Form', $student['cnic_bform']); ?>
             <?php row('Blood Group', $student['blood_group']); ?>
             <?php row('Religion', $student['religion']); ?>
-            <?php row('Caste', $student['caste']); ?>
-            <?php row('Identification Mark', $student['identification_mark']); ?>
-            <?php row('Disease, if any', $student['disease_if_any']); ?>
-            <?php row('Orphan Student', $student['is_orphan'] ? 'Yes' : 'No'); ?>
+            <?php if (!$__isSelf): ?>
+                <?php row('Caste', $student['caste']); ?>
+                <?php row('Identification Mark', $student['identification_mark']); ?>
+                <?php row('Disease, if any', $student['disease_if_any']); ?>
+                <?php row('Orphan Student', $student['is_orphan'] ? 'Yes' : 'No'); ?>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -100,11 +165,13 @@ function row($label, $value) {
         <div class="card-title" style="margin-bottom:14px;">Academic &amp; Admission</div>
         <div class="form-grid">
             <?php row('Date of Admission', $student['enrollment_date'] ? date('d M Y', strtotime($student['enrollment_date'])) : ''); ?>
-            <?php row('Previous School', $student['previous_school']); ?>
-            <?php row('Previous ID / Board Roll No', $student['previous_id_board_roll_no']); ?>
-            <?php row('Discount in Fee', $student['discount_percent'] > 0 ? $student['discount_percent'] . '%' : '0%'); ?>
+            <?php if (!$__isSelf): ?>
+                <?php row('Previous School', $student['previous_school']); ?>
+                <?php row('Previous ID / Board Roll No', $student['previous_id_board_roll_no']); ?>
+                <?php row('Discount in Fee', $student['discount_percent'] > 0 ? $student['discount_percent'] . '%' : '0%'); ?>
+            <?php endif; ?>
         </div>
-        <?php if ($student['additional_note']): ?>
+        <?php if ($student['additional_note'] && !$__isSelf): ?>
             <div class="form-group"><label>Additional Note</label><div style="padding:8px 0;color:#333;"><?php echo e($student['additional_note']); ?></div></div>
         <?php endif; ?>
     </div>
