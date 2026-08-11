@@ -9,6 +9,13 @@ if (is_admin()) {
     $notices = $pdo->query(
         "SELECT n.*, u.full_name as posted_by_name FROM notices n LEFT JOIN users u ON n.posted_by = u.id ORDER BY n.created_at DESC"
     )->fetchAll();
+} elseif (is_student_role(current_role())) {
+    $stmt = $pdo->prepare(
+        "SELECT n.*, u.full_name as posted_by_name FROM notices n LEFT JOIN users u ON n.posted_by = u.id
+         WHERE n.audience IN ('All','Students') ORDER BY n.created_at DESC"
+    );
+    $stmt->execute();
+    $notices = $stmt->fetchAll();
 } else {
     $stmt = $pdo->prepare(
         "SELECT n.*, u.full_name as posted_by_name FROM notices n LEFT JOIN users u ON n.posted_by = u.id
@@ -23,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_admin()) {
     $title = trim($_POST['title'] ?? '');
     $body = trim($_POST['body'] ?? '');
     $audience = $_POST['audience'] ?? 'All';
-    if (!in_array($audience, ['All','Teachers','Admins'], true)) $audience = 'All';
+    if (!in_array($audience, ['All','Teachers','Students','Admins'], true)) $audience = 'All';
 
     if ($title === '' || $body === '') {
         flash('error', 'Title and message are required.');
@@ -67,6 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && is_admin()) {
             <select name="audience">
                 <option value="All">Everyone</option>
                 <option value="Teachers">Teachers Only</option>
+                <option value="Students">Students Only</option>
                 <option value="Admins">Admins Only</option>
             </select>
             <button type="submit" class="btn btn-success" style="margin-top:10px;">📢 Post Notice</button>

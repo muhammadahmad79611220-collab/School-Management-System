@@ -105,6 +105,16 @@ function current_teacher_id(): ?int {
     return $_SESSION['teacher_id'] ?? null;
 }
 
+/** Get the students.id linked to the currently logged-in student user, or null. */
+function current_student_id(): ?int {
+    return $_SESSION['student_id'] ?? null;
+}
+
+/** Is the given role key the built-in 'student' role? Used by the sidebar/pages to gate student-only views. */
+function is_student_role(?string $role): bool {
+    return $role === 'student';
+}
+
 /** Is the given role key the built-in 'teacher' role? Used by the sidebar to show teacher-specific links. */
 function is_teacher_role(?string $role): bool {
     return $role === 'teacher';
@@ -163,6 +173,7 @@ function attempt_login(string $username, string $password): bool {
     $_SESSION['role']       = $user['role'];
     $_SESSION['full_name']  = $user['full_name'];
     $_SESSION['teacher_id'] = $user['teacher_id'];
+    $_SESSION['student_id'] = $user['student_id'] ?? null;
     $_SESSION['must_change_password'] = (bool)$user['must_change_password'];
 
     log_activity('login_success');

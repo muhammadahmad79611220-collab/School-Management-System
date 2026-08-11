@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `full_name` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) DEFAULT NULL,
     `teacher_id` INT DEFAULT NULL,         -- links to teachers.id when role='teacher'
+    `student_id` INT DEFAULT NULL,         -- links to students.id when role='student'
     `must_change_password` TINYINT(1) NOT NULL DEFAULT 1,
     `is_active` TINYINT(1) NOT NULL DEFAULT 1,
     `last_login` DATETIME DEFAULT NULL,
@@ -294,7 +295,7 @@ CREATE TABLE IF NOT EXISTS `notices` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `title` VARCHAR(150) NOT NULL,
     `body` TEXT NOT NULL,
-    `audience` ENUM('All','Teachers','Admins') NOT NULL DEFAULT 'All',
+    `audience` ENUM('All','Teachers','Students','Admins') NOT NULL DEFAULT 'All',
     `posted_by` INT DEFAULT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`posted_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
@@ -392,6 +393,7 @@ INSERT INTO `settings` (`id`, `school_name`) VALUES (1, 'PAK GRAMMAR SCHOOL PATT
 INSERT INTO `roles` (`role_key`, `role_label`, `is_system`) VALUES
     ('admin', 'Administrator', 1),
     ('teacher', 'Teacher', 1),
+    ('student', 'Student', 1),
     ('accountant', 'Accountant', 0),
     ('librarian', 'Librarian', 0),
     ('receptionist', 'Receptionist', 0);

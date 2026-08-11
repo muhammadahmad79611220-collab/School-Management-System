@@ -8,6 +8,17 @@ if (is_admin()) {
     $sections = $pdo->query(
         "SELECT sec.id, sec.section_name, c.class_name FROM sections sec LEFT JOIN classes c ON sec.class_id = c.id ORDER BY c.sort_order, sec.section_name"
     )->fetchAll();
+} elseif (is_student_role(current_role())) {
+    // Students see only their own section's timetable.
+    $stmt = $pdo->prepare(
+        "SELECT sec.id, sec.section_name, c.class_name
+         FROM students s
+         JOIN sections sec ON s.section_id = sec.id
+         LEFT JOIN classes c ON sec.class_id = c.id
+         WHERE s.id = ?"
+    );
+    $stmt->execute([current_student_id()]);
+    $sections = $stmt->fetchAll();
 } else {
     // Teachers see the timetable for sections they teach in OR are class teacher of.
     $stmt = $pdo->prepare(

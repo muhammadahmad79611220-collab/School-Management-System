@@ -4,9 +4,17 @@ require_login();
 
 $pdo = getDB();
 $id = clean_id($_GET['id'] ?? null);
+
+// A student can only ever see their OWN profile — force this regardless of
+// what id was requested in the URL, so changing the URL can't expose
+// another student's record.
+if (is_student_role(current_role())) {
+    $id = current_student_id();
+}
+
 if (!$id) redirect('list.php');
 
-if (!is_admin() && !can('view', 'students') && current_role() !== 'teacher') {
+if (!is_admin() && !can('view', 'students') && current_role() !== 'teacher' && !is_student_role(current_role())) {
     require_role('admin');
 }
 
@@ -53,8 +61,10 @@ function row($label, $value) {
     <div class="card-header" style="margin-bottom:16px;">
         <div class="card-title">👤 Student Profile</div>
         <div>
-            <a href="form.php?id=<?php echo $id; ?>" class="btn">✏️ Edit</a>
-            <a href="list.php" class="btn btn-secondary">← Back</a>
+            <?php if (!is_student_role(current_role())): ?>
+                <a href="form.php?id=<?php echo $id; ?>" class="btn">✏️ Edit</a>
+                <a href="list.php" class="btn btn-secondary">← Back</a>
+            <?php endif; ?>
         </div>
     </div>
 

@@ -2,6 +2,16 @@
 require_once __DIR__ . '/config/app.php';
 require_login();
 
+// Students don't get the staff/admin dashboard (school-wide stats aren't
+// relevant or appropriate for them to see) — send them straight to their
+// own profile, which acts as their personal "dashboard".
+if (is_student_role(current_role())) {
+    $sid = current_student_id();
+    if ($sid) {
+        redirect('modules/students/view.php?id=' . $sid);
+    }
+}
+
 $pdo = getDB();
 
 $total_students = $pdo->query("SELECT COUNT(*) c FROM students WHERE status='Active'")->fetch()['c'];

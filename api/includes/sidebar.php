@@ -19,6 +19,14 @@ $__brandLogo = !empty($__settings['logo']) ? BASE_URL . 'assets/uploads/branding
         <div class="sidebar-brand-role"><?php echo e(ucfirst($role ?? '')); ?> Panel</div>
     </div>
 
+    <?php if (is_student_role($role)): ?>
+        <a href="<?php echo BASE_URL; ?>dashboard.php" class="<?php echo $current_page=='dashboard.php' ? 'active':''; ?>">👤 My Profile</a>
+        <a href="<?php echo BASE_URL; ?>modules/timetable/view.php" class="<?php echo str_contains($uri,'timetable') ? 'active':''; ?>">🗓️ Timetable</a>
+        <a href="<?php echo BASE_URL; ?>modules/notices/list.php" class="<?php echo str_contains($uri,'notices') ? 'active':''; ?>">📢 Notices</a>
+        <a href="<?php echo BASE_URL; ?>change_password.php" style="margin-top:auto;">🔑 Change Password</a>
+        <a href="<?php echo BASE_URL; ?>logout.php" style="border-top:1px solid rgba(255,255,255,0.15); padding-top:16px;">🚪 Logout</a>
+    <?php else: ?>
+
     <a href="<?php echo BASE_URL; ?>dashboard.php" class="<?php echo $current_page=='dashboard.php' ? 'active':''; ?>">📊 Dashboard</a>
 
     <?php if (is_admin() || is_teacher_role($role) || can('view','students')): ?>
@@ -79,4 +87,6 @@ $__brandLogo = !empty($__settings['logo']) ? BASE_URL . 'assets/uploads/branding
 
     <a href="<?php echo BASE_URL; ?>change_password.php" style="margin-top:auto;">🔑 Change Password</a>
     <a href="<?php echo BASE_URL; ?>logout.php" style="border-top:1px solid rgba(255,255,255,0.15); padding-top:16px;">🚪 Logout</a>
+
+    <?php endif; ?>
 </div>

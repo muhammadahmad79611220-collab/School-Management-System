@@ -140,8 +140,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cols = implode(', ', array_keys($fields));
             $placeholders = implode(', ', array_fill(0, count($fields), '?'));
             $pdo->prepare("INSERT INTO students ($cols) VALUES ($placeholders)")->execute(array_values($fields));
+            $newStudentId = (int)$pdo->lastInsertId();
             log_activity('student_created', "roll_no=$roll_no");
-            flash('success', 'Student added successfully.');
+
+            // Auto-create a student login account, same pattern as teacher logins.
+            // Username: roll number, lowercased with spaces stripped (usually already clean).
+            // If that username is somehow taken, fall back to std<id>.
+            $studentUsername = strtolower(preg_replace('/\s+/', '', $roll_no));
+            $dupCheck = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+            $dupCheck->execute([$studentUsername]);
+            if ($studentUsername === '' || $dupCheck->fetch()) {
+                $studentUsername = 'std' . $newStudentId;
+            }
+            $studentTempPassword = bin2hex(random_bytes(4)); // 8 hex characters, easy enough for a student/parent to type
+            $studentHash = password_hash($studentTempPassword, PASSWORD_DEFAULT);
+            $pdo->prepare(
+                "INSERT INTO users (username, password, role, full_name, student_id, must_change_password) VALUES (?,?,?,?,?,1)"
+            )->execute([$studentUsername, $studentHash, 'student', $full_name, $newStudentId]);
+            log_activity('student_login_created', "student_id=$newStudentId username=$studentUsername");
+
+            flash('success', "Student added successfully. Login created — Username: {$studentUsername} — Temporary password: {$studentTempPassword} (share this securely with the student/guardian; it must be changed on first login).");
         }
         redirect('list.php');
     }
